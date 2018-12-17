@@ -1,0 +1,53 @@
+{
+  "name": "echarts-packed-bubbles",
+  "enabled": true,
+  "controls": [
+    "Filters",
+    "Sort",
+    "Undo",
+    "Download",
+    "Bookmark",
+    "Share",
+    "Info"
+  ],
+  "objectFieldTypes": [
+    "TIME",
+    "NUMBER",
+    "MONEY",
+    "ATTRIBUTE",
+    "INTEGER"
+  ],
+  "variables": [
+    {
+      "name": "Group By",
+      "type": "group",
+      "descr": "",
+      "attributeType": [
+        "ATTRIBUTE",
+        "TIME"
+      ],
+      "defaultValue": "",
+      "colorMetric": false,
+      "colorNumb": 0,
+      "groupType": "attribute"
+    },
+    {
+      "name": "Metric",
+      "type": "metric",
+      "descr": "",
+      "attributeType": [
+        "MONEY",
+        "INTEGER",
+        "NUMBER"
+      ],
+      "defaultValue": [
+        {
+          "name": "count"
+        }
+      ],
+      "colorMetric": false,
+      "colorNumb": 0
+    }
+  ],
+  "templateType": "UBER_BARS"
+}

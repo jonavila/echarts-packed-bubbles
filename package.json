@@ -1,0 +1,20 @@
+{
+  "name": "echarts-packed-bubbles",
+  "version": "1.0.0",
+  "private": true,
+  "main": "visualization.js",
+  "scripts": {
+    "build": "webpack",
+    "start": "webpack --mode development --watch"
+  },
+  "devDependencies": {
+    "css-loader": "1.0.1",
+    "style-loader": "0.23.1",
+    "webpack": "4.23.1",
+    "webpack-cli": "3.1.2"
+  },
+  "dependencies": {
+    "d3-hierarchy": "^1.1.8",
+    "echarts": "^4.2.0-rc.2"
+  }
+}
