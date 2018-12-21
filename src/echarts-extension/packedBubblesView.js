@@ -1,34 +1,50 @@
 import echarts from "echarts/lib/echarts";
+import zrender from 'zrender';
+
 const graphic = echarts.graphic;
+
+const getFont = (size, family = 'source-sans-pro, sans-serif') => `400 ${size}px ${family}`;
+
+const calculateFontSize = (data, idx, radius) => {
+  const defaultFontSize = 12;
+  const maxFontSize = 24;
+  const zrenderCanvasContext = zrender.util.getContext();
+  zrenderCanvasContext.font = getFont(12);
+  const textWidth = zrenderCanvasContext.measureText(data.getName(idx)).width;
+  let fontSize = Math.floor((((2 * radius) - 20) * defaultFontSize) / textWidth);
+  if (fontSize > maxFontSize) fontSize = maxFontSize;
+  else if (fontSize < 0) fontSize = 0;
+  return fontSize;
+};
 
 function Bubble(data, idx) {
   graphic.Group.call(this);
-  const itemModel = data.getItemModel(idx);
-  const seriesModel = data.hostModel;
   const circle = new graphic.Circle({
-    z2: 2
+    z: 2
   });
-  const text = new graphic.Text();
   this.add(circle);
-  this.add(text);
   this.updateData(data, idx, true);
-  this.updateStyle(circle, data, idx, itemModel, seriesModel);
+  this.updateStyle(circle, data, idx);
 }
 
 const bubbleProto = Bubble.prototype;
 
+const realSize = _.flow([calculateFontSize, getFont]);
+
 bubbleProto.updateStyle = function(
   el,
   data,
-  dataIndex,
-  itemModel,
-  seriesModel
+  dataIndex
 ) {
   const color = data.getItemVisual(dataIndex, "color");
   const opacity = data.getItemVisual(dataIndex, "opacity");
-  const itemStyleModel = itemModel.getModel("itemStyle");
 
-  el.useStyle({ fill: color, opacity: opacity });
+  const rgb = echarts.color.parse(color);
+  const luminosity = 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
+  const textFill = luminosity >= 165 ? '#000' : '#FFF';
+
+  el.setStyle({ fill: color, opacity: opacity, text: data.getName(dataIndex), textFill, 
+                font: realSize(data, dataIndex, el.shape.r) });
 };
 
 bubbleProto.updateData = function(data, idx, firstCreate) {
@@ -43,7 +59,7 @@ bubbleProto.updateData = function(data, idx, firstCreate) {
     graphic.initProps(
       circle,
       {
-        shape: { r: layout.r }
+        shape: { r: layout.r },
       },
       seriesModel,
       idx
@@ -52,12 +68,18 @@ bubbleProto.updateData = function(data, idx, firstCreate) {
     graphic.updateProps(
       circle,
       {
-        shape: circleShape
+        shape: circleShape,
       },
       seriesModel,
       idx
     );
   }
+  // Animate manually the textBox
+  const animator = circle.animators.pop();
+  animator.during(function() {
+    circle.setStyle({ font: realSize(data, idx, circle.shape.r) });
+  });
+  circle.animators.push(animator);
 };
 
 echarts.util.inherits(Bubble, graphic.Group);
@@ -95,8 +117,4 @@ echarts.extendChartView({
 
     this._data = data;
   },
-
-  dispose: function() {
-    // dispose nothing here
-  }
 });

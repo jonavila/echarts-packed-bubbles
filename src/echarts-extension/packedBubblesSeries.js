@@ -4,8 +4,6 @@ import createListSimply from "echarts/lib/chart/helper/createListSimply";
 echarts.extendSeriesModel({
   type: "series.packedBubbles",
 
-  optionUpdated: function() {},
-
   getInitialData: function(option, ecModel) {
     return createListSimply(this, ["value"]);
   },
@@ -16,6 +14,6 @@ echarts.extendSeriesModel({
     itemStyle: {
       borderWidth: 1
     },
-    animationEasing: "cubicInOut"
+    animationEasing: "cubicInOut",
   }
 });
