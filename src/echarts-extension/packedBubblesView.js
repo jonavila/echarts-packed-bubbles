@@ -75,11 +75,8 @@ bubbleProto.updateData = function(data, idx, firstCreate) {
     );
   }
   // Animate manually the textBox
-  const animator = circle.animators.pop();
-  animator.during(function() {
-    circle.setStyle({ font: realSize(data, idx, circle.shape.r) });
-  });
-  circle.animators.push(animator);
+  const animator = _.first(circle.animators);
+  if (animator) animator.during(() => circle.setStyle({ font: realSize(data, idx, circle.shape.r) }));
 };
 
 echarts.util.inherits(Bubble, graphic.Group);
